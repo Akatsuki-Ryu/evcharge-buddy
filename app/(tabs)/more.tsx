@@ -22,7 +22,7 @@ export default function MoreScreen() {
 
         <ThemedView style={styles.creditItem}>
           <ThemedText type="subtitle">Version</ThemedText>
-          <ThemedText>1.0.0</ThemedText>
+          <ThemedText>{require('../../app.json').expo.version}</ThemedText>
         </ThemedView>
 
       </ThemedView>
@@ -68,19 +68,29 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   creditItem: {
-    backgroundColor: '#E8F4FF',
+    // backgroundColor: '#E8F4FF',
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
     borderWidth: 1,
     borderColor: '#007AFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
   featureItem: {
-    backgroundColor: '#F5F5F5',
+    // backgroundColor: '#FFFFFF',
     padding: 16,
     borderRadius: 8,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
+    borderColor: '#AAAAAA',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
 }); 
