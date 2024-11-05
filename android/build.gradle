@@ -1,5 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+def nodeExecutableAndArgs = {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    def nodePath = os.windows ? 'node.exe' : 'node'
+    def nodeDir = System.getenv("NODE_DIR") ?: "/usr/local/bin"
+    return [new File(nodeDir, nodePath).absolutePath]
+}
+
 buildscript {
     ext {
         buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0'
@@ -37,5 +44,11 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
+    }
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "1000"
     }
 }
