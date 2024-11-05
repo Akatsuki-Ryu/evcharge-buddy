@@ -10,9 +10,8 @@ export default function HomeScreen() {
   const getDefaultStopTime = () => {
     const now = new Date();
     const sixAM = new Date(now);
-    sixAM.setHours(6, 0, 0, 0); // Set to 6:00:00.000 AM
+    sixAM.setHours(6, 0, 0, 0);
 
-    // If current time is after 6 AM, set to 6 AM tomorrow
     if (now > sixAM) {
       sixAM.setDate(sixAM.getDate() + 1);
     }
@@ -20,33 +19,31 @@ export default function HomeScreen() {
     return sixAM;
   };
 
-  const [currentLevel, setCurrentLevel] = useState(10);
-  const [requiredLevel, setRequiredLevel] = useState(80);
-  const [batteryCapacity, setBatteryCapacity] = useState('42');
-  const [stopTime, setStopTime] = useState(getDefaultStopTime());
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [manualChargingTime, setManualChargingTime] = useState('');
-  const [isManualTime, setIsManualTime] = useState(false);
-
   const calculateTimeLength = (endTime: Date): number => {
     const now = new Date();
     let timeDiff = endTime.getTime() - now.getTime();
     
-    // If the selected time is earlier today, assume it's for tomorrow
     if (timeDiff < 0) {
       const tomorrow = new Date(endTime);
       tomorrow.setDate(tomorrow.getDate() + 1);
       timeDiff = tomorrow.getTime() - now.getTime();
     }
     
-    // Convert milliseconds to hours
     return Number((timeDiff / (1000 * 60 * 60)).toFixed(2));
   };
+
+  const [currentLevel, setCurrentLevel] = useState(10);
+  const [requiredLevel, setRequiredLevel] = useState(80);
+  const [batteryCapacity, setBatteryCapacity] = useState('42');
+  const [stopTime, setStopTime] = useState(getDefaultStopTime());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [chargingTime, setChargingTime] = useState(calculateTimeLength(getDefaultStopTime()).toFixed(2));
 
   const onTimeChange = (event: any, selectedTime: Date | undefined) => {
     setShowTimePicker(false);
     if (selectedTime) {
       setStopTime(selectedTime);
+      setChargingTime(calculateTimeLength(selectedTime).toFixed(2));
     }
   };
 
@@ -55,7 +52,7 @@ export default function HomeScreen() {
   };
 
   const calculateCharging = () => {
-    const time = isManualTime ? parseFloat(manualChargingTime) : calculateTimeLength(stopTime);
+    const time = parseFloat(chargingTime);
     const capacity = parseFloat(batteryCapacity);
 
     if (isNaN(time) || isNaN(capacity)) {
@@ -69,7 +66,18 @@ export default function HomeScreen() {
   };
 
   const results = calculateCharging();
-  const timeLength = calculateTimeLength(stopTime);
+
+  const updateStopTimeFromInput = (timeStr: string) => {
+    setChargingTime(timeStr);
+    
+    // Update stop time based on input
+    const hours = parseFloat(timeStr);
+    if (!isNaN(hours)) {
+      const newStopTime = new Date();
+      newStopTime.setTime(newStopTime.getTime() + (hours * 60 * 60 * 1000));
+      setStopTime(newStopTime);
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -90,6 +98,10 @@ export default function HomeScreen() {
             onValueChange={setCurrentLevel}
             minimumTrackTintColor="#007AFF"
             maximumTrackTintColor="#000000"
+            thumbTintColor="#007AFF"
+            tapToSeek={true}
+            trackHeight={6}
+            thumbSize={40}
           />
         </ThemedView>
 
@@ -107,6 +119,10 @@ export default function HomeScreen() {
             onValueChange={setRequiredLevel}
             minimumTrackTintColor="#007AFF"
             maximumTrackTintColor="#000000"
+            thumbTintColor="#007AFF"
+            tapToSeek={true}
+            trackHeight={6}
+            thumbSize={40}
           />
         </ThemedView>
 
@@ -116,7 +132,7 @@ export default function HomeScreen() {
             onPress={() => setShowTimePicker(true)}
             style={styles.timePickerButton}
           >
-            <ThemedText>{formatTime(stopTime)}</ThemedText>
+            <ThemedText style={styles.timePickerText}>{formatTime(stopTime)}</ThemedText>
           </Pressable>
           {showTimePicker && (
             <DateTimePicker
@@ -129,33 +145,14 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
-          <ThemedView style={styles.timeHeader}>
-            <ThemedText>Charging Time</ThemedText>
-            <Pressable 
-              onPress={() => setIsManualTime(!isManualTime)}
-              style={styles.toggleButton}
-            >
-              <ThemedText style={styles.toggleText}>
-                {isManualTime ? 'Auto' : 'Manual'}
-              </ThemedText>
-            </Pressable>
-          </ThemedView>
-          
-          {isManualTime ? (
-            <TextInput
-              style={styles.input}
-              value={manualChargingTime}
-              onChangeText={setManualChargingTime}
-              keyboardType="numeric"
-              placeholder="Enter hours"
-            />
-          ) : (
-            <ThemedView style={styles.calculatedTimeContainer}>
-              <ThemedText style={styles.calculatedTime}>
-                {timeLength.toFixed(2)} hours
-              </ThemedText>
-            </ThemedView>
-          )}
+          <ThemedText>Charging Time (h)</ThemedText>
+          <TextInput
+            style={styles.input}
+            value={chargingTime}
+            onChangeText={updateStopTimeFromInput}
+            keyboardType="numeric"
+            placeholder="Hours"
+          />
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
@@ -207,7 +204,8 @@ const styles = StyleSheet.create({
   },
   slider: {
     width: '100%',
-    height: 40,
+    height: 60,
+    marginVertical: 10,
   },
   input: {
     borderWidth: 1,
@@ -217,6 +215,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#ffffff',
     color: '#000000',
+  },
+  inputDisabled: {
+    backgroundColor: '#F8F9FA',
+    color: '#2C3E50',
+    borderColor: '#007AFF',
   },
   resultContainer: {
     marginTop: 30,
@@ -254,8 +257,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#007AFF',
     borderRadius: 8,
-    padding: 12,
-    backgroundColor: '#ffffff',
+    padding: 16,
+    backgroundColor: '#F8F9FA',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -264,6 +267,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+  },
+  timePickerText: {
+    fontSize: 20,
+    color: '#2C3E50',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   calculatedTimeContainer: {
     borderWidth: 1,
