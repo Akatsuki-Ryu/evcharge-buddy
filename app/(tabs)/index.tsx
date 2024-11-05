@@ -121,6 +121,14 @@ export default function HomeScreen() {
           <ThemedView style={styles.inputGroup}>
             <ThemedView style={styles.sliderHeader}>
               <ThemedText>Required Level</ThemedText>
+              <Pressable 
+                onPress={() => setRequiredLevel(80)}
+                style={styles.nowButton}
+              >
+                <ThemedText style={styles.nowButtonText}>80%</ThemedText>
+              </Pressable>
+            </ThemedView>
+            <ThemedView style={styles.sliderHeader}>
               <ThemedText>{requiredLevel.toFixed(0)}%</ThemedText>
             </ThemedView>
             <Slider
@@ -204,14 +212,30 @@ export default function HomeScreen() {
           </ThemedView>
 
           <ThemedView style={styles.inputGroup}>
-            <ThemedText>Charging Time (h)</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={chargingTime}
-              onChangeText={updateTimesFromChargingTime}
-              keyboardType="numeric"
-              placeholder="Hours"
-            />
+            <ThemedView style={styles.timeInputsRow}>
+              <ThemedView style={styles.timeInputContainer}>
+                <ThemedText>Charging Time (h)</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  value={chargingTime}
+                  onChangeText={updateTimesFromChargingTime}
+                  keyboardType="numeric"
+                  placeholder="Hours"
+                />
+              </ThemedView>
+
+              <ThemedView style={styles.timeInputContainer}>
+                <ThemedText>Battery Capacity (kWh)</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  value={batteryCapacity}
+                  onChangeText={setBatteryCapacity}
+                  keyboardType="numeric"
+                  placeholder="kWh"
+                />
+              </ThemedView>
+            </ThemedView>
+
             <ThemedView style={styles.quickTimeButtons}>
               <Pressable 
                 style={styles.quickTimeButton}
@@ -238,17 +262,6 @@ export default function HomeScreen() {
                 <ThemedText style={styles.quickTimeText}>8h</ThemedText>
               </Pressable>
             </ThemedView>
-          </ThemedView>
-
-          <ThemedView style={styles.inputGroup}>
-            <ThemedText>Battery Capacity (kWh)</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={batteryCapacity}
-              onChangeText={setBatteryCapacity}
-              keyboardType="numeric"
-              placeholder="kWh"
-            />
           </ThemedView>
         </ThemedView>
 
@@ -466,5 +479,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+  },
+  timeInputsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  timeInputContainer: {
+    flex: 1,
+    gap: 4,
   },
 });
