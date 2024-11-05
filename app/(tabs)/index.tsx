@@ -7,6 +7,10 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
+  const getDefaultStartTime = () => {
+    return new Date();
+  };
+
   const getDefaultStopTime = () => {
     const now = new Date();
     const sixAM = new Date(now);
@@ -19,14 +23,13 @@ export default function HomeScreen() {
     return sixAM;
   };
 
-  const calculateTimeLength = (endTime: Date): number => {
-    const now = new Date();
-    let timeDiff = endTime.getTime() - now.getTime();
+  const calculateTimeLength = (startTime: Date, endTime: Date): number => {
+    let timeDiff = endTime.getTime() - startTime.getTime();
     
     if (timeDiff < 0) {
       const tomorrow = new Date(endTime);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      timeDiff = tomorrow.getTime() - now.getTime();
+      timeDiff = tomorrow.getTime() - startTime.getTime();
     }
     
     return Number((timeDiff / (1000 * 60 * 60)).toFixed(2));
@@ -35,15 +38,38 @@ export default function HomeScreen() {
   const [currentLevel, setCurrentLevel] = useState(10);
   const [requiredLevel, setRequiredLevel] = useState(80);
   const [batteryCapacity, setBatteryCapacity] = useState('42');
+  const [startTime, setStartTime] = useState(getDefaultStartTime());
   const [stopTime, setStopTime] = useState(getDefaultStopTime());
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [chargingTime, setChargingTime] = useState(calculateTimeLength(getDefaultStopTime()).toFixed(2));
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showStopTimePicker, setShowStopTimePicker] = useState(false);
+  const [chargingTime, setChargingTime] = useState(
+    calculateTimeLength(getDefaultStartTime(), getDefaultStopTime()).toFixed(2)
+  );
 
-  const onTimeChange = (event: any, selectedTime: Date | undefined) => {
-    setShowTimePicker(false);
+  const onStartTimeChange = (event: any, selectedTime: Date | undefined) => {
+    setShowStartTimePicker(false);
+    if (selectedTime) {
+      setStartTime(selectedTime);
+      setChargingTime(calculateTimeLength(selectedTime, stopTime).toFixed(2));
+    }
+  };
+
+  const onStopTimeChange = (event: any, selectedTime: Date | undefined) => {
+    setShowStopTimePicker(false);
     if (selectedTime) {
       setStopTime(selectedTime);
-      setChargingTime(calculateTimeLength(selectedTime).toFixed(2));
+      setChargingTime(calculateTimeLength(startTime, selectedTime).toFixed(2));
+    }
+  };
+
+  const updateTimesFromChargingTime = (timeStr: string) => {
+    setChargingTime(timeStr);
+    
+    const hours = parseFloat(timeStr);
+    if (!isNaN(hours)) {
+      const newStopTime = new Date(startTime);
+      newStopTime.setTime(startTime.getTime() + (hours * 60 * 60 * 1000));
+      setStopTime(newStopTime);
     }
   };
 
@@ -67,21 +93,9 @@ export default function HomeScreen() {
 
   const results = calculateCharging();
 
-  const updateStopTimeFromInput = (timeStr: string) => {
-    setChargingTime(timeStr);
-    
-    // Update stop time based on input
-    const hours = parseFloat(timeStr);
-    if (!isNaN(hours)) {
-      const newStopTime = new Date();
-      newStopTime.setTime(newStopTime.getTime() + (hours * 60 * 60 * 1000));
-      setStopTime(newStopTime);
-    }
-  };
-
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>EV Charging Calculator</ThemedText>
+      {/* <ThemedText type="title" style={styles.title}>EV Charging Calculator</ThemedText> */}
 
       <ThemedView style={styles.inputContainer}>
         <ThemedView style={styles.inputGroup}>
@@ -127,21 +141,67 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
-          <ThemedText>Stop Charging</ThemedText>
-          <Pressable 
-            onPress={() => setShowTimePicker(true)}
-            style={styles.timePickerButton}
-          >
-            <ThemedText style={styles.timePickerText}>{formatTime(stopTime)}</ThemedText>
-          </Pressable>
-          {showTimePicker && (
-            <DateTimePicker
-              value={stopTime}
-              mode="time"
-              is24Hour={true}
-              onChange={onTimeChange}
-            />
-          )}
+          <ThemedView style={styles.timePickersRow}>
+            <ThemedView style={styles.timePickerContainer}>
+              <ThemedView style={styles.timePickerHeader}>
+                <ThemedText>Start</ThemedText>
+                <Pressable 
+                  onPress={() => {
+                    const now = new Date();
+                    setStartTime(now);
+                    setChargingTime(calculateTimeLength(now, stopTime).toFixed(2));
+                  }}
+                  style={styles.nowButton}
+                >
+                  <ThemedText style={styles.nowButtonText}>Now</ThemedText>
+                </Pressable>
+              </ThemedView>
+              <Pressable 
+                onPress={() => setShowStartTimePicker(true)}
+                style={styles.timePickerButton}
+              >
+                <ThemedText style={styles.timePickerText}>{formatTime(startTime)}</ThemedText>
+              </Pressable>
+              {showStartTimePicker && (
+                <DateTimePicker
+                  value={startTime}
+                  mode="time"
+                  is24Hour={true}
+                  onChange={onStartTimeChange}
+                />
+              )}
+            </ThemedView>
+
+            <ThemedView style={styles.timePickerContainer}>
+              <ThemedView style={styles.timePickerHeader}>
+                <ThemedText>Stop</ThemedText>
+                <Pressable 
+                  onPress={() => {
+                    const sixAM = getDefaultStopTime();
+                    setStopTime(sixAM);
+                    setChargingTime(calculateTimeLength(startTime, sixAM).toFixed(2));
+                  }}
+                  style={styles.nowButton}
+                >
+                  <ThemedText style={styles.nowButtonText}>6am</ThemedText>
+                </Pressable>
+              </ThemedView>
+              <Pressable 
+                onPress={() => setShowStopTimePicker(true)}
+                style={styles.timePickerButton}
+              >
+                <ThemedText style={styles.timePickerText}>{formatTime(stopTime)}</ThemedText>
+              </Pressable>
+              {showStopTimePicker && (
+                <DateTimePicker
+                  value={stopTime}
+                  mode="time"
+                  is24Hour={true}
+                  onChange={onStopTimeChange}
+                />
+              )}
+            </ThemedView>
+          </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
@@ -149,32 +209,32 @@ export default function HomeScreen() {
           <TextInput
             style={styles.input}
             value={chargingTime}
-            onChangeText={updateStopTimeFromInput}
+            onChangeText={updateTimesFromChargingTime}
             keyboardType="numeric"
             placeholder="Hours"
           />
           <ThemedView style={styles.quickTimeButtons}>
             <Pressable 
               style={styles.quickTimeButton}
-              onPress={() => updateStopTimeFromInput("1")}
+              onPress={() => updateTimesFromChargingTime("1")}
             >
               <ThemedText style={styles.quickTimeText}>1h</ThemedText>
             </Pressable>
             <Pressable 
               style={styles.quickTimeButton}
-              onPress={() => updateStopTimeFromInput("2")}
+              onPress={() => updateTimesFromChargingTime("2")}
             >
               <ThemedText style={styles.quickTimeText}>2h</ThemedText>
             </Pressable>
             <Pressable 
               style={styles.quickTimeButton}
-              onPress={() => updateStopTimeFromInput("4")}
+              onPress={() => updateTimesFromChargingTime("4")}
             >
               <ThemedText style={styles.quickTimeText}>4h</ThemedText>
             </Pressable>
             <Pressable 
               style={styles.quickTimeButton}
-              onPress={() => updateStopTimeFromInput("8")}
+              onPress={() => updateTimesFromChargingTime("8")}
             >
               <ThemedText style={styles.quickTimeText}>8h</ThemedText>
             </Pressable>
@@ -279,6 +339,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
   },
+  timePickersRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  timePickerContainer: {
+    flex: 1,
+    gap: 4,
+  },
   timePickerButton: {
     borderWidth: 1,
     borderColor: '#007AFF',
@@ -363,6 +432,31 @@ const styles = StyleSheet.create({
   quickTimeText: {
     color: '#2C3E50',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  timePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  nowButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 14,
+    marginLeft: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  nowButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
     fontWeight: '600',
   },
 });
