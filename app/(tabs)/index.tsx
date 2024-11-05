@@ -1,27 +1,25 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, TextInput, View } from 'react-native';
 import { useState } from 'react';
+import Slider from '@react-native-community/slider';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { TextInput } from 'react-native';
 
 export default function HomeScreen() {
-  const [currentLevel, setCurrentLevel] = useState('');
-  const [requiredLevel, setRequiredLevel] = useState('');
+  const [currentLevel, setCurrentLevel] = useState(0);
+  const [requiredLevel, setRequiredLevel] = useState(0);
   const [chargingTime, setChargingTime] = useState('');
   const [batteryCapacity, setBatteryCapacity] = useState('');
 
   const calculateCharging = () => {
-    const current = parseFloat(currentLevel);
-    const required = parseFloat(requiredLevel);
     const time = parseFloat(chargingTime);
     const capacity = parseFloat(batteryCapacity);
 
-    if (isNaN(current) || isNaN(required) || isNaN(time) || isNaN(capacity)) {
+    if (isNaN(time) || isNaN(capacity)) {
       return { toBeCharged: 0, chargingSpeed: 0 };
     }
 
-    const toBeCharged = ((required - current) / 100) * capacity;
+    const toBeCharged = ((requiredLevel - currentLevel) / 100) * capacity;
     const chargingSpeed = toBeCharged / time;
 
     return { toBeCharged, chargingSpeed };
@@ -35,24 +33,36 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.inputContainer}>
         <ThemedView style={styles.inputGroup}>
-          <ThemedText>Current Level (%)</ThemedText>
-          <TextInput
-            style={styles.input}
+          <ThemedView style={styles.sliderHeader}>
+            <ThemedText>Current Level</ThemedText>
+            <ThemedText>{currentLevel.toFixed(0)}%</ThemedText>
+          </ThemedView>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={100}
+            step={1}
             value={currentLevel}
-            onChangeText={setCurrentLevel}
-            keyboardType="numeric"
-            placeholder="0-100"
+            onValueChange={setCurrentLevel}
+            minimumTrackTintColor="#007AFF"
+            maximumTrackTintColor="#000000"
           />
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
-          <ThemedText>Required Level (%)</ThemedText>
-          <TextInput
-            style={styles.input}
+          <ThemedView style={styles.sliderHeader}>
+            <ThemedText>Required Level</ThemedText>
+            <ThemedText>{requiredLevel.toFixed(0)}%</ThemedText>
+          </ThemedView>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={100}
+            step={1}
             value={requiredLevel}
-            onChangeText={setRequiredLevel}
-            keyboardType="numeric"
-            placeholder="0-100"
+            onValueChange={setRequiredLevel}
+            minimumTrackTintColor="#007AFF"
+            maximumTrackTintColor="#000000"
           />
         </ThemedView>
 
@@ -108,6 +118,15 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     gap: 8,
+  },
+  sliderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  slider: {
+    width: '100%',
+    height: 40,
   },
   input: {
     borderWidth: 1,
