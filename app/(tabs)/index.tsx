@@ -239,21 +239,21 @@ export default function HomeScreen() {
             <ThemedView style={styles.quickTimeButtons}>
               <Pressable 
                 style={styles.quickTimeButton}
-                onPress={() => updateTimesFromChargingTime("1")}
+                onPress={() => updateTimesFromChargingTime("3")}
               >
-                <ThemedText style={styles.quickTimeText}>1h</ThemedText>
+                <ThemedText style={styles.quickTimeText}>3h</ThemedText>
               </Pressable>
               <Pressable 
                 style={styles.quickTimeButton}
-                onPress={() => updateTimesFromChargingTime("2")}
+                onPress={() => updateTimesFromChargingTime("5")}
               >
-                <ThemedText style={styles.quickTimeText}>2h</ThemedText>
+                <ThemedText style={styles.quickTimeText}>5h</ThemedText>
               </Pressable>
               <Pressable 
                 style={styles.quickTimeButton}
-                onPress={() => updateTimesFromChargingTime("4")}
+                onPress={() => updateTimesFromChargingTime("6")}
               >
-                <ThemedText style={styles.quickTimeText}>4h</ThemedText>
+                <ThemedText style={styles.quickTimeText}>6h</ThemedText>
               </Pressable>
               <Pressable 
                 style={styles.quickTimeButton}
