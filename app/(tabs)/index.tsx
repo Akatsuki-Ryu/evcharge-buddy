@@ -172,13 +172,13 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.resultContainer}>
         <ThemedView style={styles.resultGroup}>
-          <ThemedText type="subtitle">To be charged:</ThemedText>
-          <ThemedText>{results.toBeCharged.toFixed(2)} kWh</ThemedText>
+          <ThemedText type="subtitle" style={styles.resultLabel}>To be charged:</ThemedText>
+          <ThemedText style={styles.resultValue}>{results.toBeCharged.toFixed(2)} kWh</ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.resultGroup}>
-          <ThemedText type="subtitle">Charging speed:</ThemedText>
-          <ThemedText>{results.chargingSpeed.toFixed(2)} kW</ThemedText>
+          <ThemedText type="subtitle" style={styles.resultLabel}>Charging speed:</ThemedText>
+          <ThemedText style={styles.resultValue}>{results.chargingSpeed.toFixed(2)} kW</ThemedText>
         </ThemedView>
       </ThemedView>
     </ThemedView>
@@ -215,6 +215,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    backgroundColor: '#ffffff',
+    color: '#000000',
   },
   resultContainer: {
     marginTop: 30,
@@ -224,26 +226,64 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#E8F4FF',
+    padding: 20,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  resultLabel: {
+    color: '#2C3E50',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  resultValue: {
+    color: '#2980B9',
+    fontSize: 24,
+    fontWeight: '700',
   },
   timePickerButton: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#007AFF',
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   calculatedTimeContainer: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#007AFF',
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   calculatedTime: {
     fontSize: 16,
+    color: '#000000',
+    fontWeight: '500',
   },
   timeHeader: {
     flexDirection: 'row',
@@ -255,9 +295,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
   toggleText: {
-    color: '#fff',
+    color: '#ffffff',
     fontSize: 12,
     fontWeight: '600',
   },
