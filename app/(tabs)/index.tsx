@@ -288,13 +288,14 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: 20,
-    paddingTop: 16,
+    // paddingBottom: 20,
+    // paddingTop: 16,
   },
   container: {
     flex: 1,
+    paddingTop: 40,
     padding: 20,
-    backgroundColor: '#1a1a1a',
+    // backgroundColor: '#1a1a1a',
   },
   title: {
     textAlign: 'center',
