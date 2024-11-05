@@ -22,9 +22,11 @@ export default function HomeScreen() {
 
   const [currentLevel, setCurrentLevel] = useState(10);
   const [requiredLevel, setRequiredLevel] = useState(80);
-  const [batteryCapacity, setBatteryCapacity] = useState('');
+  const [batteryCapacity, setBatteryCapacity] = useState('42');
   const [stopTime, setStopTime] = useState(getDefaultStopTime());
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [manualChargingTime, setManualChargingTime] = useState('');
+  const [isManualTime, setIsManualTime] = useState(false);
 
   const calculateTimeLength = (endTime: Date): number => {
     const now = new Date();
@@ -53,7 +55,7 @@ export default function HomeScreen() {
   };
 
   const calculateCharging = () => {
-    const time = calculateTimeLength(stopTime);
+    const time = isManualTime ? parseFloat(manualChargingTime) : calculateTimeLength(stopTime);
     const capacity = parseFloat(batteryCapacity);
 
     if (isNaN(time) || isNaN(capacity)) {
@@ -127,12 +129,33 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
-          <ThemedText>Charging Time</ThemedText>
-          <ThemedView style={styles.calculatedTimeContainer}>
-            <ThemedText style={styles.calculatedTime}>
-              {timeLength.toFixed(2)} hours
-            </ThemedText>
+          <ThemedView style={styles.timeHeader}>
+            <ThemedText>Charging Time</ThemedText>
+            <Pressable 
+              onPress={() => setIsManualTime(!isManualTime)}
+              style={styles.toggleButton}
+            >
+              <ThemedText style={styles.toggleText}>
+                {isManualTime ? 'Auto' : 'Manual'}
+              </ThemedText>
+            </Pressable>
           </ThemedView>
+          
+          {isManualTime ? (
+            <TextInput
+              style={styles.input}
+              value={manualChargingTime}
+              onChangeText={setManualChargingTime}
+              keyboardType="numeric"
+              placeholder="Enter hours"
+            />
+          ) : (
+            <ThemedView style={styles.calculatedTimeContainer}>
+              <ThemedText style={styles.calculatedTime}>
+                {timeLength.toFixed(2)} hours
+              </ThemedText>
+            </ThemedView>
+          )}
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
@@ -221,5 +244,21 @@ const styles = StyleSheet.create({
   },
   calculatedTime: {
     fontSize: 16,
+  },
+  timeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  toggleButton: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  toggleText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
