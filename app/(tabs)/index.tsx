@@ -153,6 +153,32 @@ export default function HomeScreen() {
             keyboardType="numeric"
             placeholder="Hours"
           />
+          <ThemedView style={styles.quickTimeButtons}>
+            <Pressable 
+              style={styles.quickTimeButton}
+              onPress={() => updateStopTimeFromInput("1")}
+            >
+              <ThemedText style={styles.quickTimeText}>1h</ThemedText>
+            </Pressable>
+            <Pressable 
+              style={styles.quickTimeButton}
+              onPress={() => updateStopTimeFromInput("2")}
+            >
+              <ThemedText style={styles.quickTimeText}>2h</ThemedText>
+            </Pressable>
+            <Pressable 
+              style={styles.quickTimeButton}
+              onPress={() => updateStopTimeFromInput("4")}
+            >
+              <ThemedText style={styles.quickTimeText}>4h</ThemedText>
+            </Pressable>
+            <Pressable 
+              style={styles.quickTimeButton}
+              onPress={() => updateStopTimeFromInput("8")}
+            >
+              <ThemedText style={styles.quickTimeText}>8h</ThemedText>
+            </Pressable>
+          </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.inputGroup}>
@@ -316,6 +342,27 @@ const styles = StyleSheet.create({
   toggleText: {
     color: '#ffffff',
     fontSize: 12,
+    fontWeight: '600',
+  },
+  quickTimeButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    gap: 8,
+  },
+  quickTimeButton: {
+    flex: 1,
+    backgroundColor: '#E8F4FF',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickTimeText: {
+    color: '#2C3E50',
+    fontSize: 16,
     fontWeight: '600',
   },
 });
