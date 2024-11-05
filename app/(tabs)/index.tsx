@@ -1,4 +1,4 @@
-import { StyleSheet, Platform, TextInput, View, Pressable } from 'react-native';
+import { StyleSheet, Platform, TextInput, View, Pressable, ScrollView } from 'react-native';
 import { useState } from 'react';
 import Slider from '@react-native-community/slider';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -94,181 +94,189 @@ export default function HomeScreen() {
   const results = calculateCharging();
 
   return (
-    <ThemedView style={styles.container}>
-      {/* <ThemedText type="title" style={styles.title}>EV Charging Calculator</ThemedText> */}
-
-      <ThemedView style={styles.inputContainer}>
-        <ThemedView style={styles.inputGroup}>
-          <ThemedView style={styles.sliderHeader}>
-            <ThemedText>Current Level</ThemedText>
-            <ThemedText>{currentLevel.toFixed(0)}%</ThemedText>
-          </ThemedView>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={currentLevel}
-            onValueChange={setCurrentLevel}
-            minimumTrackTintColor="#007AFF"
-            maximumTrackTintColor="#000000"
-            thumbTintColor="#007AFF"
-            tapToSeek={true}
-            trackHeight={6}
-            thumbSize={40}
-          />
-        </ThemedView>
-
-        <ThemedView style={styles.inputGroup}>
-          <ThemedView style={styles.sliderHeader}>
-            <ThemedText>Required Level</ThemedText>
-            <ThemedText>{requiredLevel.toFixed(0)}%</ThemedText>
-          </ThemedView>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={requiredLevel}
-            onValueChange={setRequiredLevel}
-            minimumTrackTintColor="#007AFF"
-            maximumTrackTintColor="#000000"
-            thumbTintColor="#007AFF"
-            tapToSeek={true}
-            trackHeight={6}
-            thumbSize={40}
-          />
-        </ThemedView>
-
-        <ThemedView style={styles.inputGroup}>
-          <ThemedView style={styles.timePickersRow}>
-            <ThemedView style={styles.timePickerContainer}>
-              <ThemedView style={styles.timePickerHeader}>
-                <ThemedText>Start</ThemedText>
-                <Pressable 
-                  onPress={() => {
-                    const now = new Date();
-                    setStartTime(now);
-                    setChargingTime(calculateTimeLength(now, stopTime).toFixed(2));
-                  }}
-                  style={styles.nowButton}
-                >
-                  <ThemedText style={styles.nowButtonText}>Now</ThemedText>
-                </Pressable>
-              </ThemedView>
-              <Pressable 
-                onPress={() => setShowStartTimePicker(true)}
-                style={styles.timePickerButton}
-              >
-                <ThemedText style={styles.timePickerText}>{formatTime(startTime)}</ThemedText>
-              </Pressable>
-              {showStartTimePicker && (
-                <DateTimePicker
-                  value={startTime}
-                  mode="time"
-                  is24Hour={true}
-                  onChange={onStartTimeChange}
-                />
-              )}
+    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
+      <ThemedView style={styles.container}>
+        <ThemedView style={styles.inputContainer}>
+          <ThemedView style={styles.inputGroup}>
+            <ThemedView style={styles.sliderHeader}>
+              <ThemedText>Current Level</ThemedText>
+              <ThemedText>{currentLevel.toFixed(0)}%</ThemedText>
             </ThemedView>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={currentLevel}
+              onValueChange={setCurrentLevel}
+              minimumTrackTintColor="#007AFF"
+              maximumTrackTintColor="#000000"
+              thumbTintColor="#007AFF"
+              tapToSeek={true}
+              trackHeight={6}
+              thumbSize={40}
+            />
+          </ThemedView>
 
-            <ThemedView style={styles.timePickerContainer}>
-              <ThemedView style={styles.timePickerHeader}>
-                <ThemedText>Stop</ThemedText>
+          <ThemedView style={styles.inputGroup}>
+            <ThemedView style={styles.sliderHeader}>
+              <ThemedText>Required Level</ThemedText>
+              <ThemedText>{requiredLevel.toFixed(0)}%</ThemedText>
+            </ThemedView>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={requiredLevel}
+              onValueChange={setRequiredLevel}
+              minimumTrackTintColor="#007AFF"
+              maximumTrackTintColor="#000000"
+              thumbTintColor="#007AFF"
+              tapToSeek={true}
+              trackHeight={6}
+              thumbSize={40}
+            />
+          </ThemedView>
+
+          <ThemedView style={styles.inputGroup}>
+            <ThemedView style={styles.timePickersRow}>
+              <ThemedView style={styles.timePickerContainer}>
+                <ThemedView style={styles.timePickerHeader}>
+                  <ThemedText>Start</ThemedText>
+                  <Pressable 
+                    onPress={() => {
+                      const now = new Date();
+                      setStartTime(now);
+                      setChargingTime(calculateTimeLength(now, stopTime).toFixed(2));
+                    }}
+                    style={styles.nowButton}
+                  >
+                    <ThemedText style={styles.nowButtonText}>Now</ThemedText>
+                  </Pressable>
+                </ThemedView>
                 <Pressable 
-                  onPress={() => {
-                    const sixAM = getDefaultStopTime();
-                    setStopTime(sixAM);
-                    setChargingTime(calculateTimeLength(startTime, sixAM).toFixed(2));
-                  }}
-                  style={styles.nowButton}
+                  onPress={() => setShowStartTimePicker(true)}
+                  style={styles.timePickerButton}
                 >
-                  <ThemedText style={styles.nowButtonText}>6am</ThemedText>
+                  <ThemedText style={styles.timePickerText}>{formatTime(startTime)}</ThemedText>
                 </Pressable>
+                {showStartTimePicker && (
+                  <DateTimePicker
+                    value={startTime}
+                    mode="time"
+                    is24Hour={true}
+                    onChange={onStartTimeChange}
+                  />
+                )}
               </ThemedView>
-              <Pressable 
-                onPress={() => setShowStopTimePicker(true)}
-                style={styles.timePickerButton}
-              >
-                <ThemedText style={styles.timePickerText}>{formatTime(stopTime)}</ThemedText>
-              </Pressable>
-              {showStopTimePicker && (
-                <DateTimePicker
-                  value={stopTime}
-                  mode="time"
-                  is24Hour={true}
-                  onChange={onStopTimeChange}
-                />
-              )}
+
+              <ThemedView style={styles.timePickerContainer}>
+                <ThemedView style={styles.timePickerHeader}>
+                  <ThemedText>Stop</ThemedText>
+                  <Pressable 
+                    onPress={() => {
+                      const sixAM = getDefaultStopTime();
+                      setStopTime(sixAM);
+                      setChargingTime(calculateTimeLength(startTime, sixAM).toFixed(2));
+                    }}
+                    style={styles.nowButton}
+                  >
+                    <ThemedText style={styles.nowButtonText}>6am</ThemedText>
+                  </Pressable>
+                </ThemedView>
+                <Pressable 
+                  onPress={() => setShowStopTimePicker(true)}
+                  style={styles.timePickerButton}
+                >
+                  <ThemedText style={styles.timePickerText}>{formatTime(stopTime)}</ThemedText>
+                </Pressable>
+                {showStopTimePicker && (
+                  <DateTimePicker
+                    value={stopTime}
+                    mode="time"
+                    is24Hour={true}
+                    onChange={onStopTimeChange}
+                  />
+                )}
+              </ThemedView>
             </ThemedView>
           </ThemedView>
-        </ThemedView>
 
-        <ThemedView style={styles.inputGroup}>
-          <ThemedText>Charging Time (h)</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={chargingTime}
-            onChangeText={updateTimesFromChargingTime}
-            keyboardType="numeric"
-            placeholder="Hours"
-          />
-          <ThemedView style={styles.quickTimeButtons}>
-            <Pressable 
-              style={styles.quickTimeButton}
-              onPress={() => updateTimesFromChargingTime("1")}
-            >
-              <ThemedText style={styles.quickTimeText}>1h</ThemedText>
-            </Pressable>
-            <Pressable 
-              style={styles.quickTimeButton}
-              onPress={() => updateTimesFromChargingTime("2")}
-            >
-              <ThemedText style={styles.quickTimeText}>2h</ThemedText>
-            </Pressable>
-            <Pressable 
-              style={styles.quickTimeButton}
-              onPress={() => updateTimesFromChargingTime("4")}
-            >
-              <ThemedText style={styles.quickTimeText}>4h</ThemedText>
-            </Pressable>
-            <Pressable 
-              style={styles.quickTimeButton}
-              onPress={() => updateTimesFromChargingTime("8")}
-            >
-              <ThemedText style={styles.quickTimeText}>8h</ThemedText>
-            </Pressable>
+          <ThemedView style={styles.inputGroup}>
+            <ThemedText>Charging Time (h)</ThemedText>
+            <TextInput
+              style={styles.input}
+              value={chargingTime}
+              onChangeText={updateTimesFromChargingTime}
+              keyboardType="numeric"
+              placeholder="Hours"
+            />
+            <ThemedView style={styles.quickTimeButtons}>
+              <Pressable 
+                style={styles.quickTimeButton}
+                onPress={() => updateTimesFromChargingTime("1")}
+              >
+                <ThemedText style={styles.quickTimeText}>1h</ThemedText>
+              </Pressable>
+              <Pressable 
+                style={styles.quickTimeButton}
+                onPress={() => updateTimesFromChargingTime("2")}
+              >
+                <ThemedText style={styles.quickTimeText}>2h</ThemedText>
+              </Pressable>
+              <Pressable 
+                style={styles.quickTimeButton}
+                onPress={() => updateTimesFromChargingTime("4")}
+              >
+                <ThemedText style={styles.quickTimeText}>4h</ThemedText>
+              </Pressable>
+              <Pressable 
+                style={styles.quickTimeButton}
+                onPress={() => updateTimesFromChargingTime("8")}
+              >
+                <ThemedText style={styles.quickTimeText}>8h</ThemedText>
+              </Pressable>
+            </ThemedView>
+          </ThemedView>
+
+          <ThemedView style={styles.inputGroup}>
+            <ThemedText>Battery Capacity (kWh)</ThemedText>
+            <TextInput
+              style={styles.input}
+              value={batteryCapacity}
+              onChangeText={setBatteryCapacity}
+              keyboardType="numeric"
+              placeholder="kWh"
+            />
           </ThemedView>
         </ThemedView>
 
-        <ThemedView style={styles.inputGroup}>
-          <ThemedText>Battery Capacity (kWh)</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={batteryCapacity}
-            onChangeText={setBatteryCapacity}
-            keyboardType="numeric"
-            placeholder="kWh"
-          />
+        <ThemedView style={styles.resultContainer}>
+          <ThemedView style={styles.resultGroup}>
+            <ThemedText type="subtitle" style={styles.resultLabel}>To be charged:</ThemedText>
+            <ThemedText style={styles.resultValue}>{results.toBeCharged.toFixed(2)} kWh</ThemedText>
+          </ThemedView>
+
+          <ThemedView style={styles.resultGroup}>
+            <ThemedText type="subtitle" style={styles.resultLabel}>Charging speed:</ThemedText>
+            <ThemedText style={styles.resultValue}>{results.chargingSpeed.toFixed(2)} kW</ThemedText>
+          </ThemedView>
         </ThemedView>
       </ThemedView>
-
-      <ThemedView style={styles.resultContainer}>
-        <ThemedView style={styles.resultGroup}>
-          <ThemedText type="subtitle" style={styles.resultLabel}>To be charged:</ThemedText>
-          <ThemedText style={styles.resultValue}>{results.toBeCharged.toFixed(2)} kWh</ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.resultGroup}>
-          <ThemedText type="subtitle" style={styles.resultLabel}>Charging speed:</ThemedText>
-          <ThemedText style={styles.resultValue}>{results.chargingSpeed.toFixed(2)} kW</ThemedText>
-        </ThemedView>
-      </ThemedView>
-    </ThemedView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
   container: {
     flex: 1,
     padding: 20,
