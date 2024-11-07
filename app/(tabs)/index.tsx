@@ -41,7 +41,7 @@ export default function HomeScreen() {
 
   const [currentLevel, setCurrentLevel] = useState(10);
   const [requiredLevel, setRequiredLevel] = useState(80);
-  const [batteryCapacity, setBatteryCapacity] = useState('42');
+  const [batteryCapacity, setBatteryCapacity] = useState('40.65');
   const [startTime, setStartTime] = useState(getDefaultStartTime());
   const [stopTime, setStopTime] = useState(getDefaultStopTime());
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
