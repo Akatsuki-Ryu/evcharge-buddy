@@ -27,9 +27,13 @@ export default function HomeScreen() {
     let timeDiff = endTime.getTime() - startTime.getTime();
     
     if (timeDiff < 0) {
-      const tomorrow = new Date(endTime);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      timeDiff = tomorrow.getTime() - startTime.getTime();
+      const nextDayEnd = new Date(endTime);
+      nextDayEnd.setDate(nextDayEnd.getDate() + 1);
+      timeDiff = nextDayEnd.getTime() - startTime.getTime();
+    }
+    
+    while (timeDiff > 24 * 60 * 60 * 1000) {
+      timeDiff -= 24 * 60 * 60 * 1000;
     }
     
     return Number((timeDiff / (1000 * 60 * 60)).toFixed(2));
